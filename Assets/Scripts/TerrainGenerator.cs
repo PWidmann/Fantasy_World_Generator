@@ -7,18 +7,21 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] private Material landMaterial;
 
     [Header("Noise Settings")]
-    [SerializeField] public int depth = 20;
-    [SerializeField] public int width = 256;
-    [SerializeField] public int height = 256;
-    [SerializeField] public float scale = 20;
-    [SerializeField] public float terrainUpdateRate = 0.01f;
+    [SerializeField] private int terrainHeighScale = 20;
+    [SerializeField] private int noiseScale = 20;
+    private int mapSize = 256;
+    private float terrainUpdateRate = 0.01f;
     
     private float gameTimer = 0;
     private TerrainData chunkData;
     private GameObject terrainChunk;
 
+
+    private float[,] mapValues;
+
     private void Start()
     {
+
         GenerateChunkTerrainObject();
     }
 
@@ -50,18 +53,18 @@ public class TerrainGenerator : MonoBehaviour
     TerrainData GenerateTerrain()
     {
         TerrainData terrainData = new TerrainData();
-        terrainData.heightmapResolution = width + 1;
-        terrainData.size = new Vector3(width, depth, height);
+        terrainData.heightmapResolution = mapSize + 1;
+        terrainData.size = new Vector3(mapSize, terrainHeighScale, mapSize);
         terrainData.SetHeights(0, 0, GenerateHeights());
         return terrainData;
     }
 
     float[,] GenerateHeights()
     {
-        float[,] heights = new float[width, height];
-        for (int x = 0; x < width; x++)
+        float[,] heights = new float[mapSize, mapSize];
+        for (int x = 0; x < mapSize; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < mapSize; y++)
             {
                 heights[x, y] = CalculateHeight(x, y);
             }
@@ -72,8 +75,8 @@ public class TerrainGenerator : MonoBehaviour
 
     float CalculateHeight(int x, int y)
     {
-        float xCoord = (float)x / width * scale;
-        float yCoord = (float)y / height * scale;
+        float xCoord = (float)x / mapSize * noiseScale;
+        float yCoord = (float)y / mapSize * noiseScale;
 
         return Mathf.PerlinNoise(xCoord, yCoord);
     }
