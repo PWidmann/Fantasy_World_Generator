@@ -9,7 +9,7 @@ public static class TerrainTools
 {
     public static float[,] ApplyFalloffMap(float[,] currentMap, float[,] falloffMap)
     {
-        float[,] outputHeightMap = new float[currentMap.GetLength(0), currentMap.GetLength(1)];
+        float[,] outputHeightMap = new float[currentMap.GetLength(1), currentMap.GetLength(0)];
 
         for (int x = 0; x < currentMap.GetLength(1); x++)
         {

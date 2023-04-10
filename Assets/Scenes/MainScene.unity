@@ -467,8 +467,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.03987496, y: 0.84557354, z: -0.0638096, w: -0.5285298}
-  m_LocalPosition: {x: 474.67456, y: 22.199972, z: 367.4169}
+  m_LocalRotation: {x: 0.16734035, y: 0.38989836, z: -0.07230271, w: 0.9026343}
+  m_LocalPosition: {x: -6.2330594, y: 14.739162, z: -8.258411}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -504,29 +504,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88845bbd9e3995a4dae5053fb75f2235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 2057922136}
-  landMaterial: {fileID: 2100000, guid: c33f109ab8d6f164fa07910a43fa2807, type: 2}
-  mapSize: 512
-  terrainHeighScale: 20
-  noiseScale: 1
-  xOffset: 0
-  yOffset: 0
+  useFlatShading: 1
+  mapSize: 200
+  chunkSize: 20
+  heightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  terrain: {fileID: 2057922135}
+  terrainMaterial: {fileID: 2100000, guid: c33f109ab8d6f164fa07910a43fa2807, type: 2}
+  heightScale: 9.06
   seed: 1337
-  frequency: 1.96
-  octaves: 3
+  frequency: 1.09
   lacunarity: 2.91
-  persistance: 0.5
-  fallOffValueA: 1.61
-  fallOffValueB: 6.23
-  useBlur: 1
+  octaves: 3
+  useFalloff: 1
+  fallOffValueA: 2.91
+  fallOffValueB: 3.96
+  useBlur: 0
   blurRadius: 10
+  usePlateaus: 1
   plateau1: 0.2
   plateau2: 0.4
   plateau3: 0.6
-  plateau4: 0.85
-  plateauSmoothing: 0.38
-  nrRamps: 2
-  rampWidth: 5
+  plateau4: 0.9
+  plateauSmoothing: 0.5
 --- !u!4 &1934712246
 Transform:
   m_ObjectHideFlags: 0
@@ -552,7 +574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2057922136}
   m_Layer: 0
-  m_Name: Level
+  m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -664,7 +686,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094907183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 239, y: 5, z: 219}
+  m_LocalPosition: {x: 239, y: 2, z: 219}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
