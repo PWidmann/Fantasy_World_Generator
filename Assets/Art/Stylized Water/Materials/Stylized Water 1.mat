@@ -41,33 +41,33 @@ Material:
     - _EdgeFoamDepth: 0.7
     - _FancyShadows: 0
     - _FoamContribution: 1
-    - _FoamNoiseScale: 0.444
-    - _FoamScale: 10
+    - _FoamNoiseScale: 0.87
+    - _FoamScale: 10.6
     - _FoamSpeed: 0.1
     - _MaxSampleDistance: 49
-    - _MaxShadowDistance: 600
+    - _MaxShadowDistance: 39.54
     - _ReflectionContribution: 0.847
     - _RefractionStrength: 0
     - _SparkleExponent: 5000
-    - _SparkleScale: 64.74
+    - _SparkleScale: 54
     - _SparkleSpeed: 0.025
-    - _SunSpecularExponent: 3500
+    - _SunSpecularExponent: 3931
     - _VertexNormalDelta: 0.01
-    - _Wave1Amplitude: 0.5
-    - _Wave1Direction: 0.5
-    - _Wave1Speed: 0.25
-    - _Wave1Wavelength: 10
-    - _Wave2Amplitude: 0.2
+    - _Wave1Amplitude: 0.6
+    - _Wave1Direction: 1
+    - _Wave1Speed: 0.47
+    - _Wave1Wavelength: 30
+    - _Wave2Amplitude: 0.3
     - _Wave2Direction: 0.25
-    - _Wave2Speed: 1
-    - _Wave2Wavelength: 10
+    - _Wave2Speed: 1.04
+    - _Wave2Wavelength: 30
     - _WaveNormalDelta: 0.01
     - _WaveNormalScale: 20
-    - _WaveNormalSpeed: 0.05
+    - _WaveNormalSpeed: 0.1
     m_Colors:
     - _DeepColor: {r: 0, g: 0.012465047, b: 0.122641504, a: 1}
     - _EdgeFoamColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 0.57254905}
-    - _FarColor: {r: 0.11764703, g: 0.43326613, b: 0.8117647, a: 1}
+    - _FarColor: {r: 0.0734247, g: 0.32165834, b: 0.6226415, a: 1}
     - _SSSColor: {r: 0.15222874, g: 0.2735849, b: 0.06323425, a: 1}
     - _ShadowColor: {r: 0.16220185, g: 0.2170624, b: 0.254717, a: 1}
     - _ShallowColor: {r: 0.44313726, g: 0.9137255, b: 0.6627451, a: 1}

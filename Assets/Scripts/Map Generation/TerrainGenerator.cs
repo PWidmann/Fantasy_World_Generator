@@ -8,6 +8,15 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
+using System.Threading;
+
+struct ChunkData
+{
+    public Vector3[] vertices;
+    public int[] triangles;
+    public Vector2[] uvs;
+}
+
 
 public class TerrainGenerator : MonoBehaviour
 {
@@ -58,6 +67,8 @@ public class TerrainGenerator : MonoBehaviour
     private List<GameObject> chunks = new List<GameObject>();
     GameObject tempObj;
     Mesh tempMesh;
+
+    private List<ChunkData> chunkData = new List<ChunkData>();
 
     void Start()
     {
@@ -130,6 +141,75 @@ public class TerrainGenerator : MonoBehaviour
                 chunks.Add(tempObj);
             }
         }
+    }
+
+    private void CreateMeshDataThreaded(Vector2 terrainPosition)
+    {
+        vertices = new Vector3[(chunkSize + 1) * (chunkSize + 1)];
+        uv = new Vector2[(chunkSize + 1) * (chunkSize + 1)];
+
+        int currentWorldPosX = (int)(terrainPosition.x * chunkSize);
+        int currentWorldPosZ = (int)(terrainPosition.y * chunkSize);
+
+        Thread t = new Thread(() =>
+        {
+            for (int i = 0, z = 0; z <= chunkSize; z++)
+            {
+                for (int x = 0; x <= chunkSize; x++)
+                {
+                    float y = noiseValues[x + currentWorldPosX, z + currentWorldPosZ] * heightScale;
+                    vertices[i] = new Vector3(x, y, z);
+                    uv[i] = new Vector2(x / (float)chunkSize, z / (float)chunkSize);
+                    i++;
+                }
+            }
+        });
+
+        t.Start();
+
+        triangles = new int[chunkSize * chunkSize * 12];
+
+        int vert = 0;
+        int tris = 0;
+
+        // Create triangle quads
+        for (int z = 0; z < chunkSize; z += 2)
+        {
+            for (int x = 0; x < chunkSize; x += 2)
+            {
+                // Bottom triangle
+                triangles[tris + 0] = vert + 0 + (z * chunkSize / 2);
+                triangles[tris + 1] = vert + chunkSize + 2 + (z * chunkSize / 2);
+                triangles[tris + 2] = vert + 2 + (z * chunkSize / 2);
+
+                // Right triangle
+                triangles[tris + 3] = vert + 2 + (z * chunkSize / 2);
+                triangles[tris + 4] = vert + chunkSize + 2 + (z * chunkSize / 2);
+                triangles[tris + 5] = vert + (chunkSize + 1) * 2 + 2 + (z * chunkSize / 2);
+
+                // Top triangle
+                triangles[tris + 6] = vert + (chunkSize + 1) * 2 + 2 + (z * chunkSize / 2);
+                triangles[tris + 7] = vert + chunkSize + 2 + (z * chunkSize / 2);
+                triangles[tris + 8] = vert + (chunkSize + 1) * 2 + 0 + (z * chunkSize / 2);
+
+                // Left triangle
+                triangles[tris + 9] = vert + (chunkSize + 1) * 2 + 0 + (z * chunkSize / 2);
+                triangles[tris + 10] = vert + chunkSize + 2 + (z * chunkSize / 2);
+                triangles[tris + 11] = vert + 0 + (z * chunkSize / 2);
+
+                vert += 2;
+                tris += 12;
+            }
+            vert += 2;
+        }
+
+        t.Join();
+
+        ChunkData chunk = new ChunkData();
+        chunk.vertices = vertices;
+        chunk.triangles = triangles;
+        chunk.uvs = uv;
+        chunkData.Add(chunk);
     }
 
     private void CreateMeshData(Vector2 terrainPosition)
