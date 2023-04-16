@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.AccessControl;
 using TMPro;
 using UnityEngine;
@@ -61,7 +62,7 @@ public class TerrainGenerator : MonoBehaviour
     void Start()
     {
         InitializeMap();
-        GenerateTerrain();   
+        GenerateTerrain();
     }
 
 
@@ -211,7 +212,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
 
             //East/West edge
@@ -224,7 +225,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
 
             // 3 corners (except top right) same height = align middle vertex
@@ -235,7 +236,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
 
             // 3 corners (except top left) same height = align middle vertex
@@ -246,7 +247,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
 
             // 3 corners (except bottom right) same height = align middle vertex
@@ -257,7 +258,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
 
             // 3 corners (except bottom left) same height = align middle vertex
@@ -268,7 +269,7 @@ public class TerrainGenerator : MonoBehaviour
                 vertices[v + 4].y = y;
                 vertices[v + 7].y = y;
                 vertices[v + 10].y = y;
-                Debug.Log("Smoothed out middle vertex of quad");
+                UnityEngine.Debug.Log("Smoothed out middle vertex of quad");
             }
         }
     }

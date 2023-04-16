@@ -429,20 +429,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainMat: {fileID: 2100000, guid: c33f109ab8d6f164fa07910a43fa2807, type: 2}
   terrainTransform: {fileID: 2057922136}
-  chunkSize: 100
-  mapSize: 500
+  chunkSize: 200
+  mapSize: 2000
   seed: 1337
-  heightScale: 6
-  frequency: 1.6
-  lacunarity: 2.91
-  octaves: 3
+  heightScale: 45
+  frequency: 2
+  lacunarity: 2
+  octaves: 5
   useFalloff: 1
-  fallOffValueA: 2.91
-  fallOffValueB: 3.96
+  fallOffValueA: 1.3
+  fallOffValueB: 1.5
   usePlateaus: 1
-  plateau1: 0.2
-  plateau2: 0.4
-  plateau3: 0.6
+  plateau1: 0.1
+  plateau2: 0.3
+  plateau3: 0.5
   plateau4: 0.9
   plateauSmoothing: 0.5
 --- !u!4 &1934712246
@@ -509,7 +509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!64 &2094907184
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -544,7 +544,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 536035fa1de7d0249a5e748a214124c3, type: 2}
+  - {fileID: 2100000, guid: 2f280c117f7574253a4a2adca2bf0e6b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -582,8 +582,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094907183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 239, y: 1.5, z: 219}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalPosition: {x: 1000, y: 4, z: 1000}
+  m_LocalScale: {x: 200, y: 1, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

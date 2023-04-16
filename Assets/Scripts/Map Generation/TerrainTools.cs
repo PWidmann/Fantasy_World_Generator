@@ -41,15 +41,15 @@ public static class TerrainTools
                 }
                 else if (value > plateau1 && value <= plateau2)
                 {
-                    outputMap[x, y] = plateau2;
+                    outputMap[x, y] = Mathf.SmoothStep(value, plateau2, smoothness);
                 }
                 else if (value > plateau2 && value <= plateau3)
                 {
-                    outputMap[x, y] = plateau3;
+                    outputMap[x, y] = Mathf.SmoothStep(value, plateau3, smoothness);
                 }
                 else if (value > plateau3 && value <= plateau4)
                 {
-                    outputMap[x, y] = plateau4;
+                    outputMap[x, y] = Mathf.SmoothStep(value, plateau4, smoothness);
                 }
                 else
                 {
