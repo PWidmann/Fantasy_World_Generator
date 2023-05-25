@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Mono.Cecil.Cil;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
@@ -58,10 +62,86 @@ public class MapGenerator : MonoBehaviour
 
     int lastChunksPerRow = 0;
 
+    NativeArray<int> jobResult;
+
 
     void Start()
     {
-        GenerateNewMap();
+        //GenerateNewMap();
+
+        ExecuteJobs();
+    }
+
+    private void Update()
+    {
+        
+    }
+
+    public void ExecuteJobs()
+    {
+        float startTime = Time.realtimeSinceStartup;
+
+        NativeArray<JobHandle> jobHandleArray = new NativeArray<JobHandle>(1000, Allocator.Temp);
+        jobResult = new NativeArray<int>(1000, Allocator.Persistent);
+
+        for (int i = 0; i < 1000; i++)
+        {
+            if (i == 0)
+            {
+                JobHandle jobHandle = CreateMeshDataTaskJob(i, jobResult);
+                jobHandleArray[i] = jobHandle;
+
+            }
+            else
+            {
+                JobHandle jobHandle = CreateMeshDataTaskJob(i, jobResult, jobHandleArray[i - 1]);
+                jobHandleArray[i] = jobHandle;
+            }
+            
+
+        }
+
+        JobHandle.CompleteAll(jobHandleArray);
+
+        jobHandleArray.Dispose();
+
+
+
+        foreach (int i in jobResult)
+        {
+            if (i != 0)
+            {
+                Debug.Log("Result: " + i);
+            }
+        }
+
+        jobResult.Dispose();
+        //foreach (int val in jobResults)
+        //{
+        //    Debug.Log("Result: " + val);
+        //}
+
+        Debug.Log("Executing all jobs took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+    }
+
+    private JobHandle CreateMeshDataTaskJob(int jobID, NativeArray<int> resultArray, JobHandle previousJob)
+    {
+        CreateMeshDataJob job = new CreateMeshDataJob();
+        job.number = 1;
+        job.jobID = jobID;
+        job.result = resultArray;
+
+        return job.Schedule(previousJob);
+    }
+
+    private JobHandle CreateMeshDataTaskJob(int jobID, NativeArray<int> resultArray)
+    {
+        CreateMeshDataJob job = new CreateMeshDataJob();
+        job.number = 1;
+        job.jobID = jobID;
+        job.result = resultArray;
+
+        return job.Schedule();
     }
 
     public void GenerateNewMap()
@@ -147,6 +227,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    
     void CreateChunkMeshData(Vector2 terrainPosition, int chunkID)
     {
         vertices = new Vector3[(chunkSize + 1) * (chunkSize + 1)];
@@ -245,5 +326,28 @@ public class MapGenerator : MonoBehaviour
         fallOffImage.color = Color.white;
 
         return newNoiseValues;
+    }
+
+    
+}
+
+public struct CreateMeshDataJob : IJob
+{
+    public int number;
+    public int jobID;
+
+    /// <summary>
+    /// result is a reference to memory, not a copy of a value
+    /// </summary>
+    public NativeArray<int> result;
+
+    public void Execute()
+    {
+        for (int i = 0; i < 50000; i++)
+        {
+            number += 1;
+        }
+
+        result[jobID] = number;
     }
 }

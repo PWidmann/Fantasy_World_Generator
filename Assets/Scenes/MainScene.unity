@@ -1097,9 +1097,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1489851061}
-        m_TargetAssemblyTypeName: GUI_DebugPanel, Assembly-CSharp
-        m_MethodName: GenerateNewMap
+      - m_Target: {fileID: 1934712247}
+        m_TargetAssemblyTypeName: MapGenerator, Assembly-CSharp
+        m_MethodName: ExecuteJobs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
