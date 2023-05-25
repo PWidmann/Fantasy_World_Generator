@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
+
 
 public struct ChunkData
 {
@@ -17,7 +18,6 @@ public struct ChunkData
     public Vector2[] uvs;
     public Vector2 terrainPosition;
 }
-
 
 public class MapGenerator : MonoBehaviour
 {
@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour
     private PerlinNoise noise;
     private float[,] noiseValues;
     private float[,] falloffMap;
-    
+
     // Terrain chunk temp values
     private Mesh tempMesh;
     private Vector3[] vertices;
@@ -62,195 +62,88 @@ public class MapGenerator : MonoBehaviour
 
     int lastChunksPerRow = 0;
 
-    NativeArray<int> jobResult;
+
+    List<MeshFilter> meshFilters = new List<MeshFilter>();
+    List<MeshCollider> meshColliders = new List<MeshCollider>();
+    List<MeshRenderer> meshRenderers = new List<MeshRenderer>();
 
 
     void Start()
     {
-        //GenerateNewMap();
+        GenerateNewMap();
 
-        ExecuteJobs();
+        
     }
 
     private void Update()
     {
+
+    }
+
+    private void OnValidate()
+    {
         
     }
 
-    public void ExecuteJobs()
-    {
-        float startTime = Time.realtimeSinceStartup;
-
-        NativeArray<JobHandle> jobHandleArray = new NativeArray<JobHandle>(1000, Allocator.Temp);
-        jobResult = new NativeArray<int>(1000, Allocator.Persistent);
-
-        for (int i = 0; i < 1000; i++)
-        {
-            if (i == 0)
-            {
-                JobHandle jobHandle = CreateMeshDataTaskJob(i, jobResult);
-                jobHandleArray[i] = jobHandle;
-
-            }
-            else
-            {
-                JobHandle jobHandle = CreateMeshDataTaskJob(i, jobResult, jobHandleArray[i - 1]);
-                jobHandleArray[i] = jobHandle;
-            }
-            
-
-        }
-
-        JobHandle.CompleteAll(jobHandleArray);
-
-        jobHandleArray.Dispose();
-
-
-
-        foreach (int i in jobResult)
-        {
-            if (i != 0)
-            {
-                Debug.Log("Result: " + i);
-            }
-        }
-
-        jobResult.Dispose();
-        //foreach (int val in jobResults)
-        //{
-        //    Debug.Log("Result: " + val);
-        //}
-
-        Debug.Log("Executing all jobs took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
-    }
-
-    private JobHandle CreateMeshDataTaskJob(int jobID, NativeArray<int> resultArray, JobHandle previousJob)
-    {
-        CreateMeshDataJob job = new CreateMeshDataJob();
-        job.number = 1;
-        job.jobID = jobID;
-        job.result = resultArray;
-
-        return job.Schedule(previousJob);
-    }
-
-    private JobHandle CreateMeshDataTaskJob(int jobID, NativeArray<int> resultArray)
-    {
-        CreateMeshDataJob job = new CreateMeshDataJob();
-        job.number = 1;
-        job.jobID = jobID;
-        job.result = resultArray;
-
-        return job.Schedule();
-    }
 
     public void GenerateNewMap()
     {
+        float startTime = Time.realtimeSinceStartup;
+
         CreateChunkObjects();
 
         noise = new PerlinNoise(seed, frequency, amplitude, lacunarity, persistance, octaves);
         junksPerRow = mapSize / chunkSize;
-        
+
         uv = new Vector2[(chunkSize + 1) * (chunkSize + 1)];
+
+        float startTime2 = Time.realtimeSinceStartup;
         noiseValues = noise.GetNoiseValues(mapSize + junksPerRow, mapSize + junksPerRow);
-        //falloffMap = FalloffGenerator.GenerateFalloffMap(mapSize + numberOfJunks, mapSize + numberOfJunks, fallOffValueA, fallOffValueB);
-
-        //falloffMap = CreateGradientArray(mapSize + junksPerRow, mapSize + junksPerRow, fallOffValueA);
-        //
-        //if (useFalloff)
-        //{
-        //    noiseValues = SubtractingFalloff(noiseValues);
-        //
-        //    
-        //}
-        //else
-        //{
-        //    fallOffImage.color = Color.black;
-        //}
-
-
-
+        Debug.Log("getting noise values took: " + ((Time.realtimeSinceStartup - startTime2) * 1000f) + "ms");
         chunkDataList.Clear();
+
+        CreateUVandTriangleData();
+        StartCoroutine(CreateChunkVertices());
+        StartCoroutine(ApplyMeshDataToTerrainObjects());
+    }
+
+    private IEnumerator CreateChunkVertices()
+    {
+        float startTime = Time.realtimeSinceStartup;
+
         for (int i = 0, z = 0; z < junksPerRow; z++)
         {
             for (int x = 0; x < junksPerRow; x++)
             {
-                CreateChunkMeshData(new Vector2(x, z), i);
+                CreateChunkVerticesData(new Vector2(x, z), i);
                 i++;
+                yield return null;
             }
+            
         }
 
-        ApplyMeshDataToTerrainObjects();
+        Debug.Log("Chunk vertices generation took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
     }
 
-    private void ApplyMeshDataToTerrainObjects()
+    private void CreateUVandTriangleData()
     {
-        for (int i = 0; i < chunkDataList.Count; i++)
-        {
-            chunks[i].GetComponent<MeshFilter>().mesh.Clear();
-            chunks[i].GetComponent<MeshFilter>().mesh.vertices = chunkDataList[i].vertices;
-            chunks[i].GetComponent<MeshFilter>().mesh.triangles = chunkDataList[i].triangles;
-            chunks[i].GetComponent<MeshFilter>().mesh.uv = chunkDataList[i].uvs;
-            chunks[i].GetComponent<MeshFilter>().mesh.RecalculateNormals();
-            chunks[i].GetComponent<MeshCollider>().sharedMesh = chunks[i].GetComponent<MeshFilter>().sharedMesh;
-            chunks[i].GetComponent<MeshCollider>().enabled = true;
-            chunks[i].GetComponent<MeshRenderer>().material = terrainMaterial;
-            chunks[i].transform.position = new Vector3(chunkDataList[i].terrainPosition.x * chunkSize, 0, chunkDataList[i].terrainPosition.y * chunkSize);
-        }
-    }
+        //float startTime = Time.realtimeSinceStartup;
 
-    void CreateChunkObjects()
-    {
-        int chunksPerRow = mapSize / chunkSize;
+        triangles = new int[chunkSize * chunkSize * 6];
+        int vert = 0;
+        int tris = 0;
 
-        if (chunksPerRow != lastChunksPerRow || chunks.Count == 0)
-        {
-            foreach (GameObject go in chunks)
-            {
-                Destroy(go);
-            }
-
-            chunks.Clear();
-
-            // Create terrain chunks and add them to list
-            for (int x = 0; x < chunksPerRow * chunksPerRow; x++)
-            {
-                tempObj = new GameObject("TerrainChunk");
-                tempObj.AddComponent(typeof(MeshRenderer));
-                tempObj.AddComponent(typeof(MeshFilter));
-                tempObj.AddComponent(typeof(MeshCollider));
-                tempObj.transform.SetParent(terrain.transform);
-                chunks.Add(tempObj);
-            }
-
-            lastChunksPerRow = chunksPerRow;
-        }
-    }
-
-    
-    void CreateChunkMeshData(Vector2 terrainPosition, int chunkID)
-    {
-        vertices = new Vector3[(chunkSize + 1) * (chunkSize + 1)];
-
-        int currentWorldPosX = (int)(terrainPosition.x * chunkSize);
-        int currentWorldPosZ = (int)(terrainPosition.y * chunkSize);
-
+        // UVs
         for (int i = 0, z = 0; z <= chunkSize; z++)
         {
             for (int x = 0; x <= chunkSize; x++)
             {
-                float y = noiseValues[currentWorldPosZ + z, currentWorldPosX + x] * heightScale;
-                vertices[i] = new Vector3(x, y, z);
                 uv[i] = new Vector2(x / (float)chunkSize, z / (float)chunkSize);
                 i++;
             }
         }
-
-        triangles = new int[chunkSize * chunkSize * 6];
-
-        int vert = 0;
-        int tris = 0;
-
+        
+        // Triangles
         for (int z = 0; z < chunkSize; z++)
         {
             for (int x = 0; x < chunkSize; x++)
@@ -269,6 +162,98 @@ public class MapGenerator : MonoBehaviour
 
             vert++;
         }
+        //Debug.Log("UV and triangle data generation took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+    }
+
+    private IEnumerator ApplyMeshDataToTerrainObjects()
+    {
+        float startTime = Time.realtimeSinceStartup;
+
+        for (int i = 0; i < chunkDataList.Count; i++)
+        {
+            var mesh = new Mesh();
+            mesh.SetVertices(chunkDataList[i].vertices);
+            mesh.SetTriangles(chunkDataList[i].triangles, 0);
+            mesh.SetUVs(0, chunkDataList[i].uvs);
+
+            if (mesh.normals.Length == 0)
+            {
+                mesh.RecalculateNormals();
+            }
+
+            meshFilters[i].mesh = mesh;
+            //meshColliders[i].sharedMesh = mesh;
+            //meshColliders[i].enabled = true;
+            meshRenderers[i].material = terrainMaterial;
+            chunks[i].transform.position = new Vector3(chunkDataList[i].terrainPosition.x * chunkSize, 0, chunkDataList[i].terrainPosition.y * chunkSize);
+
+            yield return null;
+        }
+
+        Debug.Log("Applying mesh data took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+    }
+
+    void CreateChunkObjects()
+    {
+        //float startTime = Time.realtimeSinceStartup;
+
+        int chunksPerRow = mapSize / chunkSize;
+
+        if (chunksPerRow != lastChunksPerRow || chunks.Count == 0)
+        {
+            foreach (GameObject go in chunks)
+            {
+                Destroy(go);
+            }
+
+            chunks.Clear();
+
+            // Create terrain chunks and add them to list
+            for (int x = 0; x < chunksPerRow * chunksPerRow; x++)
+            {
+                
+                tempObj = new GameObject("TerrainChunk");
+                
+                MeshRenderer meshRenderer = (MeshRenderer)tempObj.AddComponent(typeof(MeshRenderer));
+                meshRenderers.Add(meshRenderer);
+
+                MeshFilter meshFilter = (MeshFilter)tempObj.AddComponent(typeof(MeshFilter));
+                meshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+                meshFilters.Add(meshFilter);
+
+                //MeshCollider meshCollider = (MeshCollider)tempObj.AddComponent(typeof(MeshCollider));
+                //meshColliders.Add(meshCollider);
+
+                tempObj.transform.SetParent(terrain.transform);
+                chunks.Add(tempObj);
+            }
+
+            lastChunksPerRow = chunksPerRow;
+        }
+
+        //Debug.Log("Creating chunk Game Objects took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+    }
+
+    
+
+    void CreateChunkVerticesData(Vector2 terrainPosition, int chunkID)
+    {
+        //float startTime = Time.realtimeSinceStartup;
+
+        vertices = new Vector3[(chunkSize + 1) * (chunkSize + 1)];
+
+        int currentWorldPosX = (int)(terrainPosition.x * chunkSize);
+        int currentWorldPosZ = (int)(terrainPosition.y * chunkSize);
+
+        for (int i = 0, z = 0; z <= chunkSize; z++)
+        {
+            for (int x = 0; x <= chunkSize; x++)
+            {
+                float y = noiseValues[currentWorldPosZ + z, currentWorldPosX + x] * heightScale;
+                vertices[i] = new Vector3(x, y, z);
+                i++;
+            }
+        }
 
         ChunkData chunkData = new ChunkData();
         chunkData.chunkID = chunkID;
@@ -276,8 +261,8 @@ public class MapGenerator : MonoBehaviour
         chunkData.triangles = triangles;
         chunkData.uvs = uv;
         chunkData.terrainPosition = terrainPosition;
-
         chunkDataList.Add(chunkData);
+        //Debug.Log("Vertices data generation took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
     }
 
     public float[,] CreateGradientArray(int width, int height, float maxDistance)
@@ -328,26 +313,5 @@ public class MapGenerator : MonoBehaviour
         return newNoiseValues;
     }
 
-    
-}
 
-public struct CreateMeshDataJob : IJob
-{
-    public int number;
-    public int jobID;
-
-    /// <summary>
-    /// result is a reference to memory, not a copy of a value
-    /// </summary>
-    public NativeArray<int> result;
-
-    public void Execute()
-    {
-        for (int i = 0; i < 50000; i++)
-        {
-            number += 1;
-        }
-
-        result[jobID] = number;
-    }
 }
