@@ -28,7 +28,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] GameObject terrain;
     [SerializeField] Material terrainMaterial;
     [SerializeField] RawImage fallOffImage;
-    [SerializeField] AnimationCurve animCurve;
+    [SerializeField] GUI_DebugPanel guiDebugPanel;
 
     [Header("Perlin Values")]
     public float heightScale = 2.0f;
@@ -42,7 +42,7 @@ public class MapGenerator : MonoBehaviour
     private int junksPerRow;
 
     [SerializeField] private float fallOffValueA = 3;
-    //[SerializeField] private float fallOffValueB = 2.2f;
+    [SerializeField] private float fallOffValueB = 2.2f;
 
     // Complete map noise
     private PerlinNoise noise;
@@ -68,49 +68,45 @@ public class MapGenerator : MonoBehaviour
     List<MeshRenderer> meshRenderers = new List<MeshRenderer>();
 
 
-    void Start()
-    {
-        GenerateNewMap();
-
-        
-    }
-
-    private void Update()
-    {
-
-    }
-
-    private void OnValidate()
-    {
-        
-    }
-
-
     public void GenerateNewMap()
     {
-        float startTime = Time.realtimeSinceStartup;
-
         CreateChunkObjects();
 
         noise = new PerlinNoise(seed, frequency, amplitude, lacunarity, persistance, octaves);
         junksPerRow = mapSize / chunkSize;
-
         uv = new Vector2[(chunkSize + 1) * (chunkSize + 1)];
 
-        float startTime2 = Time.realtimeSinceStartup;
         noiseValues = noise.GetNoiseValues(mapSize + junksPerRow, mapSize + junksPerRow);
-        Debug.Log("getting noise values took: " + ((Time.realtimeSinceStartup - startTime2) * 1000f) + "ms");
-        chunkDataList.Clear();
+        falloffMap = FalloffGenerator.GenerateFalloffMap(mapSize + junksPerRow, mapSize + junksPerRow, fallOffValueA, fallOffValueB);
 
+        //falloffMap = CreateGradientArray(mapSize + junksPerRow, mapSize + junksPerRow, fallOffValueA);
+        
+        if (useFalloff)
+        {
+            noiseValues = SubtractingFalloff(noiseValues);
+        
+            
+        }
+        else
+        {
+            fallOffImage.color = Color.black;
+        }
+
+
+
+        chunkDataList.Clear();
         CreateUVandTriangleData();
         StartCoroutine(CreateChunkVertices());
+
+        guiDebugPanel.SetLoading(true, "Creating Terrain Objects...");
+
         StartCoroutine(ApplyMeshDataToTerrainObjects());
+
+        
     }
 
     private IEnumerator CreateChunkVertices()
     {
-        float startTime = Time.realtimeSinceStartup;
-
         for (int i = 0, z = 0; z < junksPerRow; z++)
         {
             for (int x = 0; x < junksPerRow; x++)
@@ -121,8 +117,6 @@ public class MapGenerator : MonoBehaviour
             }
             
         }
-
-        Debug.Log("Chunk vertices generation took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
     }
 
     private void CreateUVandTriangleData()
@@ -182,15 +176,15 @@ public class MapGenerator : MonoBehaviour
             }
 
             meshFilters[i].mesh = mesh;
-            //meshColliders[i].sharedMesh = mesh;
-            //meshColliders[i].enabled = true;
+            meshColliders[i].sharedMesh = mesh;
+            meshColliders[i].enabled = true;
             meshRenderers[i].material = terrainMaterial;
             chunks[i].transform.position = new Vector3(chunkDataList[i].terrainPosition.x * chunkSize, 0, chunkDataList[i].terrainPosition.y * chunkSize);
 
             yield return null;
         }
 
-        Debug.Log("Applying mesh data took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+        guiDebugPanel.SetLoading(false, "");
     }
 
     void CreateChunkObjects()
@@ -221,8 +215,8 @@ public class MapGenerator : MonoBehaviour
                 meshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
                 meshFilters.Add(meshFilter);
 
-                //MeshCollider meshCollider = (MeshCollider)tempObj.AddComponent(typeof(MeshCollider));
-                //meshColliders.Add(meshCollider);
+                MeshCollider meshCollider = (MeshCollider)tempObj.AddComponent(typeof(MeshCollider));
+                meshColliders.Add(meshCollider);
 
                 tempObj.transform.SetParent(terrain.transform);
                 chunks.Add(tempObj);

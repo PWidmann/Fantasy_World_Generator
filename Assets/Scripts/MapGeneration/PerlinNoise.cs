@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class PerlinNoise
 {
@@ -30,8 +31,7 @@ public class PerlinNoise
 
         float max = 0f;
         float min = float.MaxValue;
-        float tempAmplitude = 0;
-        float tempFrequency = 0;
+
 
         for (int x = 0; x < width; x++)
         {
@@ -39,8 +39,8 @@ public class PerlinNoise
             {
                 noiseValues[x, y] = 0;
 
-                tempAmplitude = amplitude;
-                tempFrequency = frequency;
+                float tempAmplitude = amplitude;
+                float tempFrequency = frequency;
 
                 for (int k = 0; k < octaves; k++)
                 {
