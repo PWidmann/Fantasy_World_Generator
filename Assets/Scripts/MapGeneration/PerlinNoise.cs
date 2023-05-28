@@ -15,6 +15,9 @@ public class PerlinNoise
 
     int octaves;
 
+    float minVal;
+    float maxVal;
+
     public PerlinNoise(int seed, float frequency, float amplitude, float lacunarity, float persistance, int octaves)
     {
         this.seed = seed;
@@ -23,19 +26,24 @@ public class PerlinNoise
         this.lacunarity = lacunarity;
         this.persistance = persistance;
         this.octaves = octaves;
+
+        maxVal = 0f;
+        minVal = float.MaxValue;
     }
 
-    public float[,] GetNoiseValues(int width, int height)
+    /// <summary>
+    /// Gets called per chunk
+    /// </summary>
+    public float[,] GetNoiseValues(int xPos, int yPos, int mapsize, int chunkSize)
     {
-        float[,] noiseValues = new float[width, height];
+        float[,] noiseValues = new float[chunkSize + 1, chunkSize + 1];
 
-        float max = 0f;
-        float min = float.MaxValue;
+        int xMinPos = xPos * chunkSize;
+        int yMinPos = yPos * chunkSize;
 
-
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < noiseValues.GetLength(0); x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < noiseValues.GetLength(1); y++)
             {
                 noiseValues[x, y] = 0;
 
@@ -44,7 +52,7 @@ public class PerlinNoise
 
                 for (int k = 0; k < octaves; k++)
                 {
-                    noiseValues[x, y] += Mathf.PerlinNoise((x + seed) / (float)width * frequency, (y + seed) / (float)height * frequency) * amplitude;
+                    noiseValues[x, y] += Mathf.PerlinNoise((xMinPos + x + seed) / ((float)mapsize) * frequency, (yMinPos + y + seed) / ((float)mapsize) * frequency) * amplitude;
                     frequency *= lacunarity;
                     amplitude *= persistance;
                 }
@@ -52,23 +60,23 @@ public class PerlinNoise
                 amplitude = tempAmplitude;
                 frequency = tempFrequency;
 
-                if (noiseValues[x, y] > max)
+                if (noiseValues[x, y] > maxVal)
                 {
-                    max = noiseValues[x, y];
+                    maxVal = noiseValues[x, y];
                 }
 
-                if (noiseValues[x, y] < min)
+                if (noiseValues[x, y] < minVal)
                 {
-                    min = noiseValues[x, y];
+                    minVal = noiseValues[x, y];
                 }
             }
         }
 
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i <  noiseValues.GetLength(0); i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < noiseValues.GetLength(1); j++)
             {
-                noiseValues[i, j] = Mathf.InverseLerp(max, min, noiseValues[i, j]);
+                noiseValues[i, j] = Mathf.InverseLerp(8, 0, noiseValues[i, j]);
             }
         }
 

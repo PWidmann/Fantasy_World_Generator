@@ -17,6 +17,7 @@ public static class FalloffGenerator
 
                 float value = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y));
                 map[i, j] = Evaluate(value, falloffValue_a, falloffValue_b);
+                
             }
         }
 
