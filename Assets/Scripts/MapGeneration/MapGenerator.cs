@@ -21,17 +21,22 @@ public struct ChunkData
 
 public class MapGenerator : MonoBehaviour
 {
+    
     [Header("Map Settings")]
     public int mapSize = 100; // Must be a multiple of chunkSize
-    public int chunkSize = 20;
-    public bool useFalloff = true;
-    public bool createColliders = false;
-    public bool showMeshes = true;
+    private int chunkSize = 200;
+    private bool useFalloff = true;
+    private bool createColliders = true;
+    private bool showMeshes = true;
+
     [SerializeField] GameObject terrain;
     [SerializeField] Material terrainMaterial;
     [SerializeField] RawImage fallOffImage;
     [SerializeField] GUI_DebugPanel guiDebugPanel;
     [SerializeField] AnimationCurve animCurve;
+    [Header("UI")]
+    [SerializeField] private GameObject backgroundImage;
+    [SerializeField] private GameObject loadingPanel;
 
     [Header("Perlin Values")]
     public float heightScale = 2.0f;
@@ -80,6 +85,11 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private float plateau4 = 0.9f;
     [SerializeField] private float plateauSmoothing = 0.5f;
 
+    private void Start()
+    {
+        GenerateNewMap();
+    }
+
     public void GenerateNewMap()
     {
         CreateChunkObjects();
@@ -97,19 +107,10 @@ public class MapGenerator : MonoBehaviour
 
         //falloffMap = CreateGradientArray(mapSize + junksPerRow, mapSize + junksPerRow, fallOffValueA);
 
-        
-
-
-
         chunkDataList.Clear();
         CreateUVandTriangleData();
         StartCoroutine(CreateChunkVertices());
-
-        guiDebugPanel.SetLoading(true, "Creating Terrain Objects...");
-
-        StartCoroutine(ApplyMeshDataToTerrainObjects());
-
-        
+        StartCoroutine(ApplyMeshDataToTerrainObjects());   
     }
 
 
@@ -129,8 +130,6 @@ public class MapGenerator : MonoBehaviour
 
     private void CreateUVandTriangleData()
     {
-        //float startTime = Time.realtimeSinceStartup;
-
         triangles = new int[chunkSize * chunkSize * 6];
         int vert = 0;
         int tris = 0;
@@ -164,7 +163,6 @@ public class MapGenerator : MonoBehaviour
 
             vert++;
         }
-        //Debug.Log("UV and triangle data generation took: " + ((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
     }
 
     private IEnumerator ApplyMeshDataToTerrainObjects()
@@ -193,8 +191,6 @@ public class MapGenerator : MonoBehaviour
 
             yield return null;
         }
-
-        guiDebugPanel.SetLoading(false, "");
     }
 
     void CreateChunkObjects()
@@ -262,9 +258,6 @@ public class MapGenerator : MonoBehaviour
         {
             noiseValues = SubtractingFalloff(noiseValues, (int)terrainPosition.x, (int)terrainPosition.y);
         }
-
-        if (usePlateaus)
-            noiseValues = TerrainTools.SmoothToPlateaus(noiseValues, plateau1, plateau2, plateau3, plateau4, plateauSmoothing);
 
 
 

@@ -28,19 +28,6 @@ public class GUI_DebugPanel : MonoBehaviour
         seedText.text = "Seed: " + (int)seedSlider.value;
     }
 
-    public void ActivateLoadingScreen()
-    {
-        StartCoroutine(SetLoadingScreen());
-    }
-
-    public IEnumerator SetLoadingScreen()
-    {
-        loadingScreenPanel.SetActive(true);
-        loadingScreenText.text = "Generating Terrain Data...";
-        yield return null;
-        GenerateNewMap();
-    }
-
     public void GenerateNewMap()
     {
         mapGenerator.GenerateNewMap();
@@ -72,15 +59,5 @@ public class GUI_DebugPanel : MonoBehaviour
     {
         loadingScreenPanel.SetActive(active);
         loadingScreenText.text = text;
-    }
-
-    public void ToggleColliders()
-    {
-        mapGenerator.createColliders = toggleColliders.isOn;
-    }
-
-    public void ToggleShowMeshes()
-    {
-        mapGenerator.showMeshes = toggleMeshes.isOn;
     }
 }

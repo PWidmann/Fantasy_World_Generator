@@ -12,14 +12,15 @@ Material:
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHATEST_ON
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2450
   stringTagMap:
-    RenderType: Opaque
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -58,11 +59,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Ground_Texture_Detail:
-        m_Texture: {fileID: 2800000, guid: c7b10a01282dd5b4aaf8df0e554f21c3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 199232608701ddb429567c7b5b4b7de5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Ground_Texture_Distance:
-        m_Texture: {fileID: 2800000, guid: 506f4d7a72a30824491c259855732535, type: 3}
+        m_Texture: {fileID: 2800000, guid: 297ae25f58983ad4ca97245091159d2f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -74,11 +75,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mountain_Texture_Detail:
-        m_Texture: {fileID: 2800000, guid: fb5c5c9e0c1c57b4ea1ab98ec84c3b1d, type: 3}
+        m_Texture: {fileID: 2800000, guid: f1b0fdb0e21ae624593d18cf9eed4b34, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mountain_Texture_Distance:
-        m_Texture: {fileID: 2800000, guid: 234a92274ddd27443884c8da81156e2d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6f648c8fff2d4fc4b96abf50f4c2de2e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -90,19 +91,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Peak_Texture_Detail:
-        m_Texture: {fileID: 2800000, guid: da334d455b5056b4abe737565191be98, type: 3}
+        m_Texture: {fileID: 2800000, guid: 199232608701ddb429567c7b5b4b7de5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Peak_Texture_Distance:
-        m_Texture: {fileID: 2800000, guid: 8744ae845a77d234db5bcff3a7925c79, type: 3}
+        m_Texture: {fileID: 2800000, guid: da334d455b5056b4abe737565191be98, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Shore_Texture_Detail:
-        m_Texture: {fileID: 2800000, guid: 54ed30e8ca4e0884ba98de2a6a6571ad, type: 3}
+        m_Texture: {fileID: 2800000, guid: f6bf5a720e9c5c142aad0f819425442a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Shore_Texture_Distance:
-        m_Texture: {fileID: 2800000, guid: b90cec26e3656c2448a47682c284b9a2, type: 3}
+        m_Texture: {fileID: 2800000, guid: f6bf5a720e9c5c142aad0f819425442a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -123,8 +124,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
+    - _AlphaClip: 1
+    - _AlphaToMask: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Blend_Texture_Layers: 0
@@ -137,15 +138,15 @@ Material:
     - _Cliff_Normal_Detail: 2
     - _Cliff_Normal_Distance: 3000
     - _Cliff_Scale_Detail: 0.005
-    - _Cliff_Scale_Distance: 0.005
+    - _Cliff_Scale_Distance: 10.3
     - _Cliff_Smoothness_Detail: 0
     - _Cliff_Smoothness_Distance: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _Detail_Antitiling: 0
-    - _Distance_Antitiling: 0
+    - _Detail_Antitiling: 1
+    - _Distance_Antitiling: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
@@ -153,24 +154,24 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Ground_Height: 13000
+    - _Ground_Height: 116.6
     - _Ground_Metallic_Detail: 0
     - _Ground_Metallic_Distance: 0
-    - _Ground_Normal_Detail: 2
-    - _Ground_Normal_Distance: 3000
-    - _Ground_Scale_Detail: 2000
-    - _Ground_Scale_Distance: 1
+    - _Ground_Normal_Detail: -10.6
+    - _Ground_Normal_Distance: 10
+    - _Ground_Scale_Detail: 15
+    - _Ground_Scale_Distance: 56.4
     - _Ground_Smoothness_Detail: 0
     - _Ground_Smoothness_Distance: 0
     - _Ground_Texture_Noise: 10
     - _Metallic: 0
-    - _Mountain_Height: 1800
+    - _Mountain_Height: 119.9
     - _Mountain_Metallic_Detail: 0
     - _Mountain_Metallic_Distance: 0
-    - _Mountain_Normal_Detail: 2
-    - _Mountain_Normal_Distance: 3000
-    - _Mountain_Scale_Detail: 2000
-    - _Mountain_Scale_Distance: 1
+    - _Mountain_Normal_Detail: 3.42
+    - _Mountain_Normal_Distance: 35.07
+    - _Mountain_Scale_Detail: 2
+    - _Mountain_Scale_Distance: 10
     - _Mountain_Smoothness_Detail: 0
     - _Mountain_Smoothness_Distance: 0
     - _OcclusionStrength: 1
@@ -186,14 +187,14 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Sea_Height: 960
-    - _Shore_Height: 1100
+    - _Sea_Height: -19
+    - _Shore_Height: 53.29
     - _Shore_Metallic_Detail: 0
     - _Shore_Metallic_Distance: 0
-    - _Shore_Normal_Detail: 2
+    - _Shore_Normal_Detail: 1
     - _Shore_Normal_Distance: 3000
-    - _Shore_Scale_Detail: 2000
-    - _Shore_Scale_Distance: 1
+    - _Shore_Scale_Detail: 3000
+    - _Shore_Scale_Distance: 10
     - _Shore_Smoothness_Detail: 0
     - _Shore_Smoothness_Distance: 0
     - _Smoothness: 0.5
@@ -202,7 +203,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Turn_On_Normals: 0
+    - _Turn_On_Normals: 1
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1
@@ -213,7 +214,7 @@ Material:
     - _Cliff_Color_Distance: {r: 0.6886792, g: 0.6865135, b: 0.6865135, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Ground_Color_Detail: {r: 0.6320754, g: 0.6300877, b: 0.6300877, a: 0}
+    - _Ground_Color_Detail: {r: 0.6320754, g: 0.623131, b: 0.623131, a: 0}
     - _Ground_Color_Distance: {r: 0.6320754, g: 0.6241248, b: 0.6241248, a: 0}
     - _Mountain_Color_Detail: {r: 0.6698113, g: 0.661386, b: 0.661386, a: 0}
     - _Mountain_Color_Distance: {r: 0.6603774, g: 0.65207076, b: 0.65207076, a: 0}

@@ -1,21 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
     [Header("Buttons")]
-    [SerializeField] Button[] menuButtons;
-    [SerializeField] Button[] settingsButtons;
+    [SerializeField] private Button[] menuButtons;
+    [SerializeField] private Button[] settingsButtons;
+    [Header("Loading")]
+    [SerializeField] private GameObject loadingPanel;
+    [Header("TopPanels")]
+    [SerializeField] private GameObject menuTitle;
+    [SerializeField] private GameObject menuNav;
+    [SerializeField] private GameObject menuContent;
     [Header("Panels")]
-    [SerializeField] GameObject newGamePanel;
-    [SerializeField] GameObject loadGamePanel;
-    [SerializeField] GameObject settingsPanel;
-    [SerializeField] GameObject generalSettingsPanel;
-    [SerializeField] GameObject graphicsSettingsPanel;
-    [SerializeField] GameObject audioSettingsPanel;
-    [SerializeField] GameObject controlSettingsPanel;
+    [SerializeField] private GameObject newGamePanel;
+    [SerializeField] private GameObject loadGamePanel;
+    [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject generalSettingsPanel;
+    [SerializeField] private GameObject graphicsSettingsPanel;
+    [SerializeField] private GameObject audioSettingsPanel;
+    [SerializeField] private GameObject controlSettingsPanel;
+    [Header("World Settings")]
+    [SerializeField] private InputField inputWorldName;
+    [SerializeField] private InputField inputSeed;
+    [SerializeField] private TMP_Dropdown dropdownWorldSize;
 
     private int currentSettingsNavSelected;
 
@@ -23,6 +36,25 @@ public class MainMenu : MonoBehaviour
     {
         BackButton();
         currentSettingsNavSelected = 0;
+    }
+
+    public void StartWorld()
+    {
+        if (inputWorldName.text != "" && inputSeed.text != "")
+        {
+            menuTitle.SetActive(false);
+            menuNav.SetActive(false);
+            menuContent.SetActive(false);
+            loadingPanel.SetActive(true);
+
+            GameObject starterObject = new GameObject("GenSceneStarter");
+            starterObject.AddComponent<GenSceneStarter>();
+            starterObject.GetComponent<GenSceneStarter>().worldName = inputWorldName.text;
+            starterObject.GetComponent<GenSceneStarter>().seed = inputSeed.text;
+            starterObject.GetComponent<GenSceneStarter>().worldSize = Convert.ToInt16(dropdownWorldSize.options[dropdownWorldSize.value].text);
+
+            SceneManager.LoadScene("MainScene");
+        }
     }
 
     private void HideContentPanels()
@@ -68,6 +100,10 @@ public class MainMenu : MonoBehaviour
         }
         menuButtons[4].gameObject.SetActive(false);
         settingsPanel.SetActive(false);
+        menuTitle.SetActive(true);
+        menuNav.SetActive(true);
+        menuContent.SetActive(true);
+        loadingPanel.SetActive(false);
         currentSettingsNavSelected = 0;
         HideContentPanels();
     }
