@@ -29,6 +29,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private InputField inputWorldName;
     [SerializeField] private InputField inputSeed;
     [SerializeField] private TMP_Dropdown dropdownWorldSize;
+    [SerializeField] private TMP_Dropdown dropdownResolution;
+    [SerializeField] private TMP_Dropdown dropdownGameWindow;
+    [SerializeField] private Toggle toggleVSync;
+    [SerializeField] private Button applyButton;
 
     private int currentSettingsNavSelected;
 
@@ -36,6 +40,39 @@ public class MainMenu : MonoBehaviour
     {
         BackButton();
         currentSettingsNavSelected = 0;
+
+        
+
+        SetGameResolution();
+        
+
+        
+    }
+
+    private void SetGameResolution()
+    {
+        string resolution = Screen.width + "x" + Screen.height;
+
+        int optionIndex = -1;
+        for (int i = 0; i < dropdownResolution.options.Count; i++)
+        {
+            if (dropdownResolution.options[i].text == resolution)
+            {
+                optionIndex = i;
+                break;
+            }
+        }
+
+        if (optionIndex != -1)
+        {
+            dropdownResolution.value = optionIndex;
+            
+        }
+
+        int value = (Screen.fullScreen == true) ? value = 0 : value = 1;
+        dropdownGameWindow.value = value;
+
+        applyButton.interactable = false;
     }
 
     public void StartWorld()
@@ -116,6 +153,33 @@ public class MainMenu : MonoBehaviour
     #endregion
 
     #region SettingsButtons
+
+    public void ApplyButton()
+    {
+        // Screen settings
+        string dropDownValue = dropdownResolution.options[dropdownResolution.value].text;
+        string[] resolution = dropDownValue.Split('x');
+        bool fullScreen = dropdownGameWindow.value == 0 ? true : false;
+
+        Screen.SetResolution(int.Parse(resolution[0]), int.Parse(resolution[1]), fullScreen);
+
+        // Set graphics Quality
+        //QualitySettings.SetQualityLevel(graphicsQualityDropdown.value, false);
+
+        QualitySettings.vSyncCount = (toggleVSync.isOn)? 1: 0;
+
+        // Anti Aliasing
+        // Int Value
+        // Disabled = 0, 2x = 1, 4x = 2, 8x = 3
+        //QualitySettings.antiAliasing = aaDropdown.value;
+
+        applyButton.interactable = false;
+    }
+
+    public void ActivateApplyButton()
+    {
+        applyButton.interactable = true;
+    }
 
     private void SetSettingsButtonColors()
     {
